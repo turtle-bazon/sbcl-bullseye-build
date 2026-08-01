@@ -1,0 +1,65 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - 'build-sbcl.sh'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  SBCL_VERSION: "2.6.7"
+  IMAGE: ghcr.io/${{ github.repository }}/sbcl-bullseye
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: SBCL_VERSION=${{ env.SBCL_VERSION }}
+          tags: |
+            ${{ env.IMAGE }}:${{ env.SBCL_VERSION }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Extract SBCL install tree
+        run: |
+          cid=$(docker create "${{ env.IMAGE }}:${{ env.SBCL_VERSION }}")
+          docker cp "$cid:/opt/sbcl" ./sbcl
+          docker rm "$cid"
+          tar -czf "sbcl-${{ env.SBCL_VERSION }}-x86-64-linux.tar.gz" sbcl
+          ls -la *.tar.gz
+
+      - name: Publish binaries
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V="${{ env.SBCL_VERSION }}"
+          ASSET="sbcl-${V}-x86-64-linux.tar.gz"
+          if gh release view "sbcl-${V}" >/dev/null 2>&1; then
+            gh release upload "sbcl-${V}" "$ASSET" --clobber
+          else
+            gh release create "sbcl-${V}" "$ASSET" \
+              --title "SBCL ${V} for old-glibc Linux (x86-64)" \
+              --notes "SBCL ${V} built from source on Debian bullseye (glibc 2.31). Runs on glibc >= 2.31: Debian 11+, Ubuntu 20.04+, RHEL 8+."
+          fi
