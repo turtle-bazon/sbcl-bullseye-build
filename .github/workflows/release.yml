@@ -45,9 +45,9 @@ jobs:
       - name: Extract SBCL install tree
         run: |
           cid=$(docker create "${{ env.IMAGE }}:${{ env.SBCL_VERSION }}")
-          docker cp "$cid:/opt/sbcl" ./sbcl
+          docker cp "$cid:/usr/local" ./local
           docker rm "$cid"
-          tar -czf "sbcl-${{ env.SBCL_VERSION }}-x86-64-linux.tar.gz" sbcl
+          tar -czf "sbcl-${{ env.SBCL_VERSION }}-x86-64-linux.tar.gz" local
           ls -la *.tar.gz
 
       - name: Publish binaries

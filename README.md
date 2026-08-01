@@ -30,15 +30,18 @@ The image also bootstraps Quicklisp (`~/.sbclrc` loads it), so it is ready to
 ### Binary tarball
 
 From the GitHub Release for your SBCL version, download
-`sbcl-<version>-x86-64-linux.tar.gz`. The tarball contains an SBCL install tree
-rooted at `sbcl/`:
+`sbcl-<version>-x86-64-linux.tar.gz`. The tarball contains the install tree
+under `local/` (i.e. the contents of `/usr/local`), so extracting it into `/usr`
+installs SBCL the standard way:
 
 ```sh
-tar -xzf sbcl-<version>-x86-64-linux.tar.gz
-export SBCL_HOME="$PWD/sbcl/lib/sbcl"
-export PATH="$PWD/sbcl/bin:$PATH"
+tar -xzf sbcl-<version>-x86-64-linux.tar.gz -C /usr
+export SBCL_HOME=/usr/local/lib/sbcl
 sbcl --version
 ```
+
+(If you would rather keep it unprivileged, extract anywhere and point
+`SBCL_HOME` at the extracted `lib/sbcl`, adding the extracted `bin` to `PATH`.)
 
 ## Building / releasing
 
