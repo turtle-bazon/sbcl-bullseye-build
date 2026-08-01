@@ -15,10 +15,3 @@ RUN chmod +x /tmp/build-sbcl.sh \
     && rm /tmp/build-sbcl.sh
 
 ENV SBCL_HOME=/usr/local/lib/sbcl
-
-# Quicklisp convenience: ~/.sbclrc loads it, so containers can ql:quickload.
-RUN curl -fsSL https://beta.quicklisp.org/quicklisp.lisp -o /tmp/quicklisp.lisp \
-    && sbcl --non-interactive --load /tmp/quicklisp.lisp \
-           --eval '(quicklisp-quickstart:install)' \
-    && rm /tmp/quicklisp.lisp \
-    && echo '(load "~/quicklisp/setup.lisp")' >> /root/.sbclrc

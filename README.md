@@ -24,8 +24,8 @@ docker pull ghcr.io/<owner>/sbcl-bullseye-build/sbcl-bullseye:latest
 docker run --rm ghcr.io/<owner>/sbcl-bullseye-build/sbcl-bullseye:latest sbcl --version
 ```
 
-The image also bootstraps Quicklisp (`~/.sbclrc` loads it), so it is ready to
-`ql:quickload` a project.
+The image is a bare SBCL build; projects set up their own dependencies
+(Quicklisp etc.) when they build.
 
 ### Binary tarball
 
