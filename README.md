@@ -45,10 +45,10 @@ sbcl --version
 
 ## Building / releasing
 
-`make` is not used; GitHub Actions does everything:
+GitHub Actions does everything:
 
 - pushes the image to GHCR
-- extracts `/opt/sbcl` from the built image and uploads it to a
+- extracts `/usr/local` from the built image and uploads it to a
   `sbcl-<version>` GitHub Release
 
 Bump `SBCL_VERSION` in `.github/workflows/release.yml` (and the `ARG` default in
