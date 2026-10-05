@@ -7,9 +7,10 @@ Builds a modern SBCL from source on Debian bullseye and distributes it two ways:
 
 ## Why
 
-Official SBCL prebuilt binaries are linked against a recent glibc (2.6.7 needs
-GLIBC_2.34) and refuse to start on older systems. Compiling SBCL from source on
-bullseye links the runtime against glibc 2.31, so:
+Official SBCL prebuilt binaries are linked against a recent glibc (the 2.6.8
+runtime needs up to GLIBC_2.38, for `__isoc23_strtol`) and refuse to start on
+older systems. Compiling SBCL from source on bullseye links the runtime against
+glibc 2.31, so:
 
 - executables saved with this SBCL run on **glibc >= 2.31** (Debian 11+, Ubuntu
   20.04+, RHEL 8+, ...), and

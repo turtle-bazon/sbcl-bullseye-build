@@ -3,7 +3,7 @@
 # (the SBCL default). Run as root (e.g. inside a container).
 set -euo pipefail
 
-SBCL_VERSION="${SBCL_VERSION:-2.6.7}"
+SBCL_VERSION="${SBCL_VERSION:-2.6.8}"
 
 apt-get update
 apt-get install -y --no-install-recommends \

@@ -14,7 +14,7 @@ permissions:
   packages: write
 
 env:
-  SBCL_VERSION: "2.6.7"
+  SBCL_VERSION: "2.6.8"
   IMAGE: ghcr.io/${{ github.repository }}/sbcl-bullseye
 
 jobs:
