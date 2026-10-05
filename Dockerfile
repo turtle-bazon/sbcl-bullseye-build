@@ -11,9 +11,11 @@ ARG SBCL_VERSION
 # SBCL installs into /usr/local (its default).
 # The version to build lives in the VERSION file, so bumping it is a one-file
 # change that both this build and the release workflow pick up.
-COPY VERSION build-sbcl.sh /tmp/sbcl-build/
-RUN chmod +x /tmp/sbcl-build/build-sbcl.sh \
-    && SBCL_VERSION="$SBCL_VERSION" /tmp/sbcl-build/build-sbcl.sh \
-    && rm -rf /tmp/sbcl-build
+# Keep these in their own directory: build-sbcl.sh uses $work_dir (/tmp/sbcl-build
+# by default) for the unpacked source and deletes it when finished.
+COPY VERSION build-sbcl.sh /tmp/sbcl-build-helpers/
+RUN chmod +x /tmp/sbcl-build-helpers/build-sbcl.sh \
+    && SBCL_VERSION="$SBCL_VERSION" /tmp/sbcl-build-helpers/build-sbcl.sh \
+    && rm -rf /tmp/sbcl-build-helpers
 
 ENV SBCL_HOME=/usr/local/lib/sbcl

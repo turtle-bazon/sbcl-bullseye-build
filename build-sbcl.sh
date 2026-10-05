@@ -7,11 +7,15 @@ set -euo pipefail
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 version_file="${VERSION_FILE:-$script_dir/VERSION}"
+# Scratch space for the unpacked source. Deliberately NOT the same directory as
+# this script and its VERSION file, since the tree is removed at the end.
+work_dir="${work_dir:-/tmp/sbcl-build}"
+tarball="${work_dir%/}.tar.bz2"
 
 SBCL_VERSION="${SBCL_VERSION:-$(tr -d '[:space:]' < "$version_file")}"
 : "${SBCL_VERSION:?no SBCL version in $version_file and none in the environment}"
 
-echo "Building SBCL $SBCL_VERSION"
+echo "Building SBCL $SBCL_VERSION in $work_dir"
 
 # Bullseye is EOL, so deb.debian.org no longer serves its security pool: the
 # bullseye-security Packages index still advertises deb11uN versions, but those
@@ -39,11 +43,12 @@ rm -rf /var/lib/apt/lists/*
 
 curl -fsSL \
     "https://downloads.sourceforge.net/project/sbcl/sbcl/${SBCL_VERSION}/sbcl-${SBCL_VERSION}-source.tar.bz2" \
-    -o /tmp/sbcl-source.tar.bz2
+    -o "$tarball"
 
-mkdir /tmp/sbcl-build
-tar -xjf /tmp/sbcl-source.tar.bz2 -C /tmp/sbcl-build --strip-components=1
-cd /tmp/sbcl-build
+rm -rf "$work_dir"
+mkdir -p "$work_dir"
+tar -xjf "$tarball" -C "$work_dir" --strip-components=1
+cd "$work_dir"
 
 sh make.sh
 sh install.sh
@@ -53,4 +58,4 @@ sh install.sh
 apt-get purge -y sbcl
 rm -rf /var/lib/apt/lists/*
 
-rm -rf /tmp/sbcl-build /tmp/sbcl-source.tar.bz2
+rm -rf "$work_dir" "$tarball"
