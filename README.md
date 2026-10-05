@@ -58,3 +58,16 @@ on changes to `Dockerfile` / `build-sbcl.sh`.
 
 Requires the repo to have a GitHub Actions workflow permission that allows
 `packages: write` (GHCR) and `contents: write` (Releases).
+
+## A note on apt sources
+
+Bullseye is EOL and `deb.debian.org` no longer serves its **security** pool: the
+`bullseye-security` Packages index still advertises the `deb11uN` versions, but
+those `.deb` files now return 404, so `apt-get install` fails with a wall of
+"Failed to fetch ... 404". The main `bullseye` dist is still intact.
+
+`build-sbcl.sh` therefore points apt at `archive.debian.org`, the frozen mirror,
+which serves the byte-identical signed `Release` file and still has every pool
+file. It also sets `Acquire::Check-Valid-Until "false"` because the archive omits
+`Valid-Until`. This is unrelated to the SBCL version; it is a property of bullseye
+being archived, and it will keep the build working as long as we build here.
