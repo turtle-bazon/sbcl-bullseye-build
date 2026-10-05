@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 # Build SBCL from source on Debian bullseye and install it into /usr/local
 # (the SBCL default). Run as root (e.g. inside a container).
+# The version comes from the VERSION file next to this script; export
+# SBCL_VERSION to override it for an ad-hoc build.
 set -euo pipefail
 
-SBCL_VERSION="${SBCL_VERSION:-2.6.8}"
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+version_file="${VERSION_FILE:-$script_dir/VERSION}"
+
+SBCL_VERSION="${SBCL_VERSION:-$(tr -d '[:space:]' < "$version_file")}"
+: "${SBCL_VERSION:?no SBCL version in $version_file and none in the environment}"
+
+echo "Building SBCL $SBCL_VERSION"
 
 # Bullseye is EOL, so deb.debian.org no longer serves its security pool: the
 # bullseye-security Packages index still advertises deb11uN versions, but those

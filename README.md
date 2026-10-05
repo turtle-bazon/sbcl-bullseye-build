@@ -52,9 +52,10 @@ GitHub Actions does everything:
 - extracts `/usr/local` from the built image and uploads it to a
   `sbcl-<version>` GitHub Release
 
-Bump `SBCL_VERSION` in `.github/workflows/release.yml` (and the `ARG` default in
-`Dockerfile`) to build a newer SBCL. Run the workflow manually or let it trigger
-on changes to `Dockerfile` / `build-sbcl.sh`.
+Bump `VERSION` to build a newer SBCL — it is the single source of truth, read by
+`build-sbcl.sh` inside the image and by the workflow for the image tag and the
+release name. Nothing else needs editing. Run the workflow manually or let it
+trigger on changes to `VERSION` / `Dockerfile` / `build-sbcl.sh`.
 
 Requires the repo to have a GitHub Actions workflow permission that allows
 `packages: write` (GHCR) and `contents: write` (Releases).
